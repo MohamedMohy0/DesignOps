@@ -55,6 +55,52 @@ export default function DesignOps() {
     const shuffled = [...allFonts].sort(() => 0.5 - Math.random());
     setDisplayedFonts(shuffled.slice(0, 12));
   };
+const downloadSVG = async (icon) => {
+  const url = `https://api.iconify.design/${icon.replace(":", "/")}.svg`;
+
+  const res = await fetch(url);
+  const svgText = await res.text();
+
+  const blob = new Blob([svgText], { type: "image/svg+xml" });
+  const blobUrl = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = blobUrl;
+  a.download = `${icon}.svg`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  URL.revokeObjectURL(blobUrl);
+};
+
+
+const downloadPNG = async (icon, color = "#4f46e5") => {
+  const svgUrl = `https://api.iconify.design/${icon.replace(":", "/")}.svg?color=${color.replace("#", "")}`;
+  const res = await fetch(svgUrl);
+  const svgText = await res.text();
+
+  const img = new Image();
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext("2d");
+
+  const blob = new Blob([svgText], { type: "image/svg+xml" });
+  const url = URL.createObjectURL(blob);
+
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0, 256, 256);
+    URL.revokeObjectURL(url);
+
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = `${icon}.png`;
+    a.click();
+  };
+
+  img.src = url;
+};
 
   const fetchNewPalette = async () => {
     try {
@@ -135,10 +181,34 @@ export default function DesignOps() {
             </div>
             <div style={s.grid}>
               {icons.slice(0, 24).map(icon => (
-                <div key={icon} style={s.iconCard}>
-                  <img src={`https://api.iconify.design/${icon.replace(':', '/')}.svg?color=${darkMode ? 'white' : '4f46e5'}`} width="40" alt=""/>
-                  <code style={s.iconCode}>{icon}</code>
-                </div>
+               <div key={icon} style={s.iconCard}>
+  <img
+    src={`https://api.iconify.design/${icon.replace(':', '/')}.svg?color=${darkMode ? 'white' : '4f46e5'}`}
+    width="40"
+    alt=""
+  />
+
+  <code style={s.iconCode}>{icon}</code>
+
+  <div style={{ display: "flex", gap: "10px" }}>
+    <button
+      style={s.downloadBtn}
+      onClick={() => downloadSVG(icon)}
+    >
+      SVG
+    </button>
+
+    <button
+      style={s.downloadBtn}
+      onClick={() =>
+        downloadPNG(icon, darkMode ? "#ffffff" : "#4f46e5")
+      }
+    >
+      PNG
+    </button>
+  </div>
+</div>
+
               ))}
             </div>
           </div>
@@ -233,6 +303,17 @@ const getStyles = (darkMode) => ({
     backgroundColor: darkMode ? '#1e293b' : '#fff',
     boxShadow: darkMode ? '0 10px 20px rgba(0,0,0,0.2)' : '0 10px 20px rgba(0,0,0,0.03)'
   },
+  downloadBtn: {
+  padding: "6px 14px",
+  fontSize: "0.75rem",
+  borderRadius: "10px",
+  border: "none",
+  cursor: "pointer",
+  background: "#4f46e5",
+  color: "#fff",
+  fontWeight: "bold",
+},
+
   iconCode: { fontSize: '0.75rem', color: '#4f46e5', background: darkMode ? '#334155' : '#f5f3ff', padding: '5px 12px', borderRadius: '8px' },
   paletteGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '25px' },
   colorBox: { height: '180px', borderRadius: '18px' },
