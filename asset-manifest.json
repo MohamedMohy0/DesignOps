@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/DesignOps/static/css/main.e8d221e4.css",
+    "main.js": "/DesignOps/static/js/main.e08a3884.js",
+    "static/js/453.0da7d1e4.chunk.js": "/DesignOps/static/js/453.0da7d1e4.chunk.js",
+    "index.html": "/DesignOps/index.html",
+    "main.e8d221e4.css.map": "/DesignOps/static/css/main.e8d221e4.css.map",
+    "main.e08a3884.js.map": "/DesignOps/static/js/main.e08a3884.js.map",
+    "453.0da7d1e4.chunk.js.map": "/DesignOps/static/js/453.0da7d1e4.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e8d221e4.css",
+    "static/js/main.e08a3884.js"
+  ]
+}
